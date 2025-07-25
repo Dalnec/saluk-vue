@@ -27,9 +27,9 @@
       <div
         v-for="patient in filtered"
         :key="patient.id"
-        class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 mb-4"
+        class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 mb-3"
       >
-        <div class="flex justify-between items-start mb-4">
+        <div class="flex justify-between items-start">
           <div>
             <h3 class="text-xl font-semibold text-gray-800">{{ patient.name }}</h3>
             <p class="text-gray-600">ID: {{ patient.id }} • {{ patient.age }} años • {{ patient.gender }}</p>

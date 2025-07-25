@@ -31,7 +31,7 @@ const activeTab = ref("dashboard");
 const selectedPatient = ref(null);
 const searchTerm = ref("");
 
-const currentUser = ref({ name: "Dr. Alan Grant", role: "Paelontologo" });
+const currentUser = ref({ name: "Dra. Kruely La Caun", role: "Potologa" });
 
 const tabs = ref([
   { id: "dashboard", label: "Dashboard", icon: "fas fa-tachometer-alt" },

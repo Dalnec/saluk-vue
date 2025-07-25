@@ -52,14 +52,78 @@
     <div class="mt-6">
       <div v-if="activeTab === 'medicalHistory'">
         <h3 class="text-lg font-semibold mb-4">Historial Médico</h3>
-        <div class="space-y-4">
+        <!-- <div class="space-y-4">
           <div v-for="entry in patient.medicalHistory" :key="entry.date" class="bg-gray-50 p-4 rounded-lg">
             <p class="font-semibold">{{ entry.type }} - {{ entry.date }}</p>
             <p class="text-sm text-gray-600">Doctor: {{ entry.doctor }}</p>
             <p class="mt-2">{{ entry.description }}</p>
           </div>
-        </div>
+        </div> -->
+
+        <MedicalSummaryCard
+          doctor="Carlos Méndez"
+          date="2024-07-10"
+          :summary="{
+            anamnesis: 'Paciente refiere dolor abdominal desde hace 2 días.',
+            vitals: { temp: 37.8, pa_systolic: 120, pa_diastolic: 80, fr: 18, fc: 85 },
+            physicalExam: 'Dolor a la palpación en el cuadrante inferior derecho.',
+            diagnosis: [
+              { code: 'A09', description: 'Gastroenteritis', type: 'Presuntivo' },
+              { code: 'A09', description: 'Gastroenteritis', type: 'Presuntivo' },
+            ],
+            treatment: [
+              { name: 'Paracetamol', dose: '500mg', form: 'Tableta' },
+              { name: 'Paracetamol', dose: '500mg', form: 'Tableta' },
+            ],
+            attachments: [{ name: 'Examen de sangre.pdf', url: '/files/examen-sangre.pdf' }],
+            notes: 'Se recomienda reposo.',
+            observations: 'Evaluar evolución en 48 horas.',
+          }"
+        />
+        <MedicalSummaryCard
+          doctor="Carlos Méndez"
+          date="2024-07-10"
+          :summary="{
+            anamnesis: 'Paciente refiere dolor abdominal desde hace 2 días.',
+            vitals: { temp: 37.8, pa_systolic: 120, pa_diastolic: 80, fr: 18, fc: 85 },
+            physicalExam: 'Dolor a la palpación en el cuadrante inferior derecho.',
+            diagnosis: [{ code: 'A09', description: 'Gastroenteritis', type: 'Presuntivo' }],
+            treatment: [{ name: 'Paracetamol', dose: '500mg', form: 'Tableta' }],
+            attachments: [{ name: 'Examen de sangre.pdf', url: '/files/examen-sangre.pdf' }],
+            notes: 'Se recomienda reposo.',
+            observations: 'Evaluar evolución en 48 horas.',
+          }"
+        />
+        <MedicalSummaryCard
+          doctor="Carlos Méndez"
+          date="2024-07-10"
+          :summary="{
+            anamnesis: 'Paciente refiere dolor abdominal desde hace 2 días.',
+            vitals: { temp: 37.8, pa_systolic: 120, pa_diastolic: 80, fr: 18, fc: 85 },
+            physicalExam: 'Dolor a la palpación en el cuadrante inferior derecho.',
+            diagnosis: [{ code: 'A09', description: 'Gastroenteritis', type: 'Presuntivo' }],
+            treatment: [{ name: 'Paracetamol', dose: '500mg', form: 'Tableta' }],
+            attachments: [{ name: 'Examen de sangre.pdf', url: '/files/examen-sangre.pdf' }],
+            notes: 'Se recomienda reposo.',
+            observations: 'Evaluar evolución en 48 horas.',
+          }"
+        />
+        <MedicalSummaryCard
+          doctor="Carlos Méndez"
+          date="2024-07-10"
+          :summary="{
+            anamnesis: 'Paciente refiere dolor abdominal desde hace 2 días.',
+            vitals: { temp: 37.8, pa_systolic: 120, pa_diastolic: 80, fr: 18, fc: 85 },
+            physicalExam: 'Dolor a la palpación en el cuadrante inferior derecho.',
+            diagnosis: [{ code: 'A09', description: 'Gastroenteritis', type: 'Presuntivo' }],
+            treatment: [{ name: 'Paracetamol', dose: '500mg', form: 'Tableta' }],
+            attachments: [{ name: 'Examen de sangre.pdf', url: '/files/examen-sangre.pdf' }],
+            notes: 'Se recomienda reposo.',
+            observations: 'Evaluar evolución en 48 horas.',
+          }"
+        />
       </div>
+
       <div v-if="activeTab === 'examenFisico'">
         <h3 class="text-lg font-semibold mb-4">Examen Físico</h3>
 
@@ -71,6 +135,7 @@
             id="resumenAnamnesis"
             rows="4"
             class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            v-model="fisicalExam.summaryAnamnesis"
           ></textarea>
         </div>
 
@@ -80,23 +145,48 @@
           <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 mb-4">
             <div class="flex items-center">
               <label for="temp" class="mr-2 font-medium text-sm text-gray-700">Temp:</label>
-              <input type="text" id="temp" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+              <input
+                type="text"
+                id="temp"
+                class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                v-model="fisicalExam.vitalSigns.temperature"
+              />
             </div>
             <div class="flex items-center">
               <label for="pa" class="mr-2 font-medium text-sm text-gray-700">PA:</label>
               <div class="flex items-center flex-1">
-                <input type="text" id="pa" class="w-1/2 p-2 border border-gray-300 rounded-l-md shadow-sm" />
+                <input
+                  type="text"
+                  id="pa"
+                  class="w-1/2 p-2 border border-gray-300 rounded-l-md shadow-sm"
+                  v-model="fisicalExam.vitalSigns.bloodPressure"
+                />
                 <span class="px-2 bg-gray-100 border-t border-b border-gray-300">/</span>
-                <input type="text" id="pa2" class="w-1/2 p-2 border border-gray-300 rounded-r-md shadow-sm" />
+                <input
+                  type="text"
+                  id="pa2"
+                  class="w-1/2 p-2 border border-gray-300 rounded-r-md shadow-sm"
+                  v-model="fisicalExam.vitalSigns.oxygenSaturation"
+                />
               </div>
             </div>
             <div class="flex items-center">
               <label for="fr" class="mr-2 font-medium text-sm text-gray-700">FR:</label>
-              <input type="text" id="fr" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+              <input
+                type="text"
+                id="fr"
+                class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                v-model="fisicalExam.vitalSigns.respiratoryRate"
+              />
             </div>
             <div class="flex items-center">
               <label for="fc" class="mr-2 font-medium text-sm text-gray-700">FC:</label>
-              <input type="text" id="fc" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+              <input
+                type="text"
+                id="fc"
+                class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                v-model="fisicalExam.vitalSigns.heartRate"
+              />
             </div>
           </div>
           <label for="resumenExamenFisico" class="block text-sm font-medium text-gray-700 mb-1"
@@ -106,21 +196,24 @@
             id="resumenExamenFisico"
             rows="4"
             class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            v-model="fisicalExam.summaryPhysicalExam"
           ></textarea>
         </div>
       </div>
+
       <div v-if="activeTab === 'apoyoDiagnostico'">
-        <h3 class="text-lg font-semibold mb-4">Apoyo al Diagnóstico</h3>
+        <h3 class="text-lg font-semibold mb-2">Apoyo al Diagnóstico</h3>
         <p>Contenido de apoyo al diagnóstico...</p>
       </div>
+
       <div v-if="activeTab === 'diagnosticoTratamiento'">
         <!-- Diagnóstico Section -->
-        <div class="mb-8">
-          <div class="flex justify-between items-center mb-4">
-            <h4 class="text-xl font-bold text-gray-800">DIAGNÓSTICO</h4>
+        <div class="mb-2">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="text-lg font-bold text-gray-800">Diagnóstico</h4>
             <button
               @click="showDiagnosisModal = true"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xs py-2 px-4 rounded"
             >
               Agregar
             </button>
@@ -173,11 +266,11 @@
 
         <!-- Tratamiento Section -->
         <div>
-          <div class="flex justify-between items-center mb-4">
-            <h4 class="text-xl font-bold text-gray-800">TRATAMIENTO</h4>
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="text-lg font-bold text-gray-800">Tratamiento</h4>
             <button
               @click="showTreatmentModal = true"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              class="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded"
             >
               Agregar
             </button>
@@ -228,6 +321,7 @@
           </div>
         </div>
       </div>
+
       <div v-if="activeTab === 'anexos'">
         <h3 class="text-lg font-semibold mb-4">Anexos</h3>
         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -246,6 +340,7 @@
           </ul>
         </div>
       </div>
+
       <div v-if="activeTab === 'notasObservaciones'">
         <h3 class="text-lg font-semibold mb-4">Notas y Observaciones</h3>
         <div class="space-y-4">
@@ -255,6 +350,7 @@
               id="notas"
               rows="4"
               class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              v-model="notesObservations.notes"
             ></textarea>
           </div>
           <div>
@@ -263,6 +359,7 @@
               id="observaciones"
               rows="4"
               class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              v-model="notesObservations.observations"
             ></textarea>
           </div>
         </div>
@@ -277,6 +374,7 @@
 import { ref } from "vue";
 import AddDiagnosisModal from "./AddDiagnosisModal.vue";
 import AddTreatmentModal from "./AddTreatmentModal.vue";
+import MedicalSummaryCard from "./MedicalSummaryCard.vue";
 
 const props = defineProps({
   patient: {
@@ -286,7 +384,7 @@ const props = defineProps({
 });
 defineEmits(["back"]);
 
-const activeTab = ref("diagnosticoTratamiento");
+const activeTab = ref("medicalHistory");
 
 const attachedFiles = ref([]);
 
@@ -299,6 +397,20 @@ const handleFileUpload = (event) => {
 
 const showDiagnosisModal = ref(false);
 const showTreatmentModal = ref(false);
+
+const fisicalExam = ref({
+  weight: "",
+  height: "",
+  summaryAnamnesis: "",
+  summaryPhysicalExam: "",
+  vitalSigns: {
+    temperature: "",
+    bloodPressure: "",
+    heartRate: "",
+    respiratoryRate: "",
+    oxygenSaturation: "",
+  },
+});
 
 const diagnoses = ref([
   {
@@ -315,6 +427,11 @@ const treatments = ref([
     presentation: "Tableta",
   },
 ]);
+
+const notesObservations = ref({
+  notes: "",
+  observations: "",
+});
 
 const addDiagnosis = (diagnosis) => {
   diagnoses.value.push(diagnosis);

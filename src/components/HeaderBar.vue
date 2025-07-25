@@ -1,10 +1,9 @@
-
 <template>
   <header class="bg-white shadow-sm border-b p-4">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
         <i class="fas fa-heart text-red-500 text-2xl"></i>
-        <h1 class="text-2xl font-bold text-gray-800">MedSystem</h1>
+        <h1 class="text-2xl font-bold text-gray-800">SaluK</h1>
       </div>
       <div class="flex items-center gap-4">
         <div class="text-right">
@@ -23,11 +22,11 @@
 defineProps({
   user: {
     type: Object,
-    required: true
+    required: true,
   },
   initials: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
