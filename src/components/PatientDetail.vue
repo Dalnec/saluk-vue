@@ -4,101 +4,340 @@
       <i class="fas fa-arrow-left"></i> Volver a la lista
     </button>
     <h2 class="text-2xl font-bold mb-4">{{ patient.name }}</h2>
-    <div class="grid md:grid-cols-2 gap-6">
+    <div class="grid md:grid-cols-3 gap-6">
       <div>
         <h3 class="font-semibold mb-2">Información</h3>
+        <p><strong>ID:</strong> {{ patient.id }}</p>
         <p><strong>Edad:</strong> {{ patient.age }}</p>
         <p><strong>Género:</strong> {{ patient.gender }}</p>
+        <p><strong>Nacimiento:</strong> {{ patient.birthDate }}</p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Contacto</h3>
         <p><strong>Teléfono:</strong> {{ patient.phone }}</p>
         <p><strong>Email:</strong> {{ patient.email }}</p>
       </div>
       <div>
-        <div class="bg-red-50 rounded-lg p-4">
-          <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v4m-7.621 2.2c-.91 1.575-1.364 2.363-1.296 3.01a2 2 0 0 0 .813 1.408C4.422 20 5.331 20 7.15 20h9.703c1.817 0 2.726 0 3.251-.382a2 2 0 0 0 .814-1.409c.068-.646-.386-1.434-1.296-3.01l-4.85-8.4c-.909-1.574-1.364-2.362-1.958-2.626a2 2 0 0 0-1.627 0c-.593.264-1.048 1.052-1.957 2.625zm7.672.8v.1h-.1V16z"
-              />
-            </svg>
-            Alergias
+        <div class="bg-red-50 rounded-lg p-3">
+          <h3 class="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fas fa-exclamation-triangle text-red-500"></i> Alergias
           </h3>
-          <ul class="list-disc list-inside text-red-600 space-y-1">
+          <ul class="list-disc list-inside text-red-600 text-sm space-y-1">
             <li v-for="allergy in patient.allergies" :key="allergy">{{ allergy }}</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div class="bg-blue-50 rounded-lg p-4 mt-2">
-      <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4 text-blue-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <!-- Pestañas de navegación -->
+    <div class="mt-6 border-b border-gray-200">
+      <nav class="flex -mb-px space-x-6">
+        <button
+          v-for="tab in tabs"
+          :key="tab.id"
+          @click="activeTab = tab.id"
+          :class="[
+            'px-3 py-2 font-medium text-sm rounded-t-lg',
+            activeTab === tab.id
+              ? 'border-b-2 border-blue-500 text-blue-600'
+              : 'text-gray-500 hover:text-gray-700 hover:border-gray-300',
+          ]"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
-          />
-        </svg>
-        Medicamentos Actuales
-      </h3>
-
-      <div class="bg-white p-3 rounded border-l-4 border-blue-500">
-        <p class="font-medium text-sm text-gray-800">Ibuprofeno 400mg</p>
-        <p class="text-xs text-gray-600">1 cada 8 horas</p>
-        <p class="text-xs text-gray-500">Prescrito por: Dr. María González</p>
-      </div>
+          {{ tab.label }}
+        </button>
+      </nav>
     </div>
 
-    <div class="bg-white p-4 rounded-lg shadow-sm">
-      <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M8 17q.425 0 .713-.288T9 16t-.288-.712T8 15t-.712.288T7 16t.288.713T8 17m0-4q.425 0 .713-.288T9 12t-.288-.712T8 11t-.712.288T7 12t.288.713T8 13m0-4q.425 0 .713-.288T9 8t-.288-.712T8 7t-.712.288T7 8t.288.713T8 9m3 8h6v-2h-6zm0-4h6v-2h-6zm0-4h6V7h-6zM5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14V5H5zM5 5v14z"
-          />
-        </svg>
-        Historial Médico
-      </h3>
-
-      <div
-        v-for="(item, index) in patient.medicalHistory"
-        :key="index"
-        class="bg-gray-50 rounded-md p-4 mb-3 flex justify-between items-start text-sm"
-      >
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full">
-              {{ item.type }}
-            </span>
-            <span class="text-gray-500 text-xs">{{ item.date }}</span>
+    <!-- Contenido de las pestañas -->
+    <div class="mt-6">
+      <div v-if="activeTab === 'medicalHistory'">
+        <h3 class="text-lg font-semibold mb-4">Historial Médico</h3>
+        <div class="space-y-4">
+          <div v-for="entry in patient.medicalHistory" :key="entry.date" class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold">{{ entry.type }} - {{ entry.date }}</p>
+            <p class="text-sm text-gray-600">Doctor: {{ entry.doctor }}</p>
+            <p class="mt-2">{{ entry.description }}</p>
           </div>
-          <p class="text-gray-800 mb-1">{{ item.description }}</p>
         </div>
-        <div class="text-xs text-gray-500 whitespace-nowrap">
-          {{ item.doctor }}
+      </div>
+      <div v-if="activeTab === 'examenFisico'">
+        <h3 class="text-lg font-semibold mb-4">Examen Físico</h3>
+
+        <!-- Anamnesis Section -->
+        <div class="mb-6">
+          <h4 class="font-semibold mb-2 text-gray-800">Anamnesis</h4>
+          <label for="resumenAnamnesis" class="block text-sm font-medium text-gray-700 mb-1">Resumen Anamnesis</label>
+          <textarea
+            id="resumenAnamnesis"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          ></textarea>
+        </div>
+
+        <!-- Examen Físico Section -->
+        <div>
+          <h4 class="font-semibold mb-2 text-gray-800">Signos Vitales</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4 mb-4">
+            <div class="flex items-center">
+              <label for="temp" class="mr-2 font-medium text-sm text-gray-700">Temp:</label>
+              <input type="text" id="temp" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+            <div class="flex items-center">
+              <label for="pa" class="mr-2 font-medium text-sm text-gray-700">PA:</label>
+              <div class="flex items-center flex-1">
+                <input type="text" id="pa" class="w-1/2 p-2 border border-gray-300 rounded-l-md shadow-sm" />
+                <span class="px-2 bg-gray-100 border-t border-b border-gray-300">/</span>
+                <input type="text" id="pa2" class="w-1/2 p-2 border border-gray-300 rounded-r-md shadow-sm" />
+              </div>
+            </div>
+            <div class="flex items-center">
+              <label for="fr" class="mr-2 font-medium text-sm text-gray-700">FR:</label>
+              <input type="text" id="fr" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+            <div class="flex items-center">
+              <label for="fc" class="mr-2 font-medium text-sm text-gray-700">FC:</label>
+              <input type="text" id="fc" class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm" />
+            </div>
+          </div>
+          <label for="resumenExamenFisico" class="block text-sm font-medium text-gray-700 mb-1"
+            >Resumen Examen Físico</label
+          >
+          <textarea
+            id="resumenExamenFisico"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          ></textarea>
+        </div>
+      </div>
+      <div v-if="activeTab === 'apoyoDiagnostico'">
+        <h3 class="text-lg font-semibold mb-4">Apoyo al Diagnóstico</h3>
+        <p>Contenido de apoyo al diagnóstico...</p>
+      </div>
+      <div v-if="activeTab === 'diagnosticoTratamiento'">
+        <!-- Diagnóstico Section -->
+        <div class="mb-8">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-xl font-bold text-gray-800">DIAGNÓSTICO</h4>
+            <button
+              @click="showDiagnosisModal = true"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Agregar
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    CIEX
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Descripción del Diagnóstico
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Tipo de diagnóstico
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(diagnosis, index) in diagnoses" :key="index">
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ diagnosis.ciex }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ diagnosis.description }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ diagnosis.type }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    <button @click="deleteDiagnosis(index)" class="text-red-500 hover:text-red-700">Eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tratamiento Section -->
+        <div>
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-xl font-bold text-gray-800">TRATAMIENTO</h4>
+            <button
+              @click="showTreatmentModal = true"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Agregar
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Descripción
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Concentración
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Presentación
+                  </th>
+                  <th
+                    class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(treatment, index) in treatments" :key="index">
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ treatment.description }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ treatment.concentration }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    {{ treatment.presentation }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap border-b border-gray-200 text-sm text-gray-500">
+                    <button @click="deleteTreatment(index)" class="text-red-500 hover:text-red-700">Eliminar</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div v-if="activeTab === 'anexos'">
+        <h3 class="text-lg font-semibold mb-4">Anexos</h3>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+          <input type="file" multiple @change="handleFileUpload" class="hidden" id="file-upload" />
+          <label for="file-upload" class="cursor-pointer">
+            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+            <p class="text-gray-500">Arrastra y suelta archivos aquí o haz clic para seleccionar</p>
+          </label>
+        </div>
+        <div class="mt-4">
+          <h4 class="font-semibold mb-2">Archivos Adjuntos:</h4>
+          <ul class="list-disc list-inside">
+            <li v-for="file in attachedFiles" :key="file.name" class="text-gray-700">
+              {{ file.name }} ({{ (file.size / 1024).toFixed(2) }} KB)
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div v-if="activeTab === 'notasObservaciones'">
+        <h3 class="text-lg font-semibold mb-4">Notas y Observaciones</h3>
+        <div class="space-y-4">
+          <div>
+            <label for="notas" class="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+            <textarea
+              id="notas"
+              rows="4"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            ></textarea>
+          </div>
+          <div>
+            <label for="observaciones" class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+            <textarea
+              id="observaciones"
+              rows="4"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            ></textarea>
+          </div>
         </div>
       </div>
     </div>
+    <AddDiagnosisModal :show="showDiagnosisModal" @close="showDiagnosisModal = false" @add-diagnosis="addDiagnosis" />
+    <AddTreatmentModal :show="showTreatmentModal" @close="showTreatmentModal = false" @add-treatment="addTreatment" />
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { ref } from "vue";
+import AddDiagnosisModal from "./AddDiagnosisModal.vue";
+import AddTreatmentModal from "./AddTreatmentModal.vue";
+
+const props = defineProps({
   patient: {
     type: Object,
     required: true,
   },
 });
 defineEmits(["back"]);
+
+const activeTab = ref("diagnosticoTratamiento");
+
+const attachedFiles = ref([]);
+
+const handleFileUpload = (event) => {
+  const files = event.target.files;
+  for (let i = 0; i < files.length; i++) {
+    attachedFiles.value.push(files[i]);
+  }
+};
+
+const showDiagnosisModal = ref(false);
+const showTreatmentModal = ref(false);
+
+const diagnoses = ref([
+  {
+    ciex: "A09",
+    description: "Gastroenteritis y colitis de origen infeccioso",
+    type: "Presuntivo",
+  },
+]);
+
+const treatments = ref([
+  {
+    description: "Paracetamol",
+    concentration: "500mg",
+    presentation: "Tableta",
+  },
+]);
+
+const addDiagnosis = (diagnosis) => {
+  diagnoses.value.push(diagnosis);
+};
+
+const deleteDiagnosis = (index) => {
+  diagnoses.value.splice(index, 1);
+};
+
+const addTreatment = (treatment) => {
+  treatments.value.push(treatment);
+};
+
+const deleteTreatment = (index) => {
+  treatments.value.splice(index, 1);
+};
+
+const tabs = [
+  { id: "medicalHistory", label: "Historial Médico" },
+  { id: "examenFisico", label: "Examen Físico" },
+  { id: "apoyoDiagnostico", label: "Apoyo al Diagnóstico" },
+  { id: "diagnosticoTratamiento", label: "Diagnóstico/Tratamiento" },
+  { id: "anexos", label: "Anexos" },
+  { id: "notasObservaciones", label: "Notas/Observaciones" },
+];
 </script>

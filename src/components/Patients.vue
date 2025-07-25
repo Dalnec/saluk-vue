@@ -40,66 +40,13 @@
         </div>
       </div>
 
-      <!-- Modal de creación -->
-      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-xl">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-gray-800">Nuevo Paciente</h2>
-            <button @click="showModal = false" class="text-gray-500 hover:text-gray-800">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <form @submit.prevent="createPatient">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                v-model="newPatient.name"
-                type="text"
-                placeholder="Nombre completo"
-                class="border p-2 rounded w-full"
-                required
-              />
-              <input
-                v-model="newPatient.age"
-                type="number"
-                placeholder="Edad"
-                class="border p-2 rounded w-full"
-                required
-              />
-              <input
-                v-model="newPatient.gender"
-                type="text"
-                placeholder="Género"
-                class="border p-2 rounded w-full"
-                required
-              />
-              <input
-                v-model="newPatient.phone"
-                type="text"
-                placeholder="Teléfono"
-                class="border p-2 rounded w-full"
-                required
-              />
-              <input
-                v-model="newPatient.email"
-                type="email"
-                placeholder="Email"
-                class="border p-2 rounded w-full"
-                required
-              />
-            </div>
-            <div class="mt-4">
-              <textarea
-                v-model="newPatient.notes"
-                placeholder="Notas o motivo de consulta"
-                class="w-full border p-2 rounded"
-              ></textarea>
-            </div>
-            <div class="mt-4 text-right">
-              <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Guardar</button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <!-- Nuevo Modal de Creación -->
+      <CreatePatientModal
+        :show="showModal"
+        :patients-count="patients.length"
+        @close="showModal = false"
+        @create="handleCreatePatient"
+      />
     </div>
   </div>
 </template>
@@ -107,6 +54,7 @@
 <script setup>
 import { ref, computed, toRefs } from "vue";
 import PatientDetail from "./PatientDetail.vue";
+import CreatePatientModal from "./CreatePatientModal.vue";
 
 const props = defineProps({
   patients: Array,
@@ -131,36 +79,9 @@ const filtered = computed(() =>
 
 // Modal de creación
 const showModal = ref(false);
-const newPatient = ref({
-  name: "",
-  age: "",
-  gender: "",
-  phone: "",
-  email: "",
-  notes: "",
-});
 
-const createPatient = () => {
-  const id = `P${(patients.value.length + 1).toString().padStart(3, "0")}`;
-  const newEntry = {
-    id,
-    name: newPatient.value.name,
-    age: newPatient.value.age,
-    gender: newPatient.value.gender,
-    phone: newPatient.value.phone,
-    email: newPatient.value.email,
-    allergies: [],
-    medicalHistory: [
-      {
-        date: new Date().toISOString().split("T")[0],
-        type: "Consulta",
-        doctor: "Dr. María González",
-        description: newPatient.value.notes || "Primera consulta",
-      },
-    ],
-  };
-  patients.value.push(newEntry);
-  Object.assign(newPatient.value, { name: "", age: "", gender: "", phone: "", email: "", notes: "" });
+const handleCreatePatient = (newPatientData) => {
+  patients.value.push(newPatientData);
   showModal.value = false;
 };
 </script>

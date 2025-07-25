@@ -31,7 +31,7 @@ const activeTab = ref("dashboard");
 const selectedPatient = ref(null);
 const searchTerm = ref("");
 
-const currentUser = ref({ name: "Dr. María González", role: "Médico General" });
+const currentUser = ref({ name: "Dr. Alan Grant", role: "Paelontologo" });
 
 const tabs = ref([
   { id: "dashboard", label: "Dashboard", icon: "fas fa-tachometer-alt" },
@@ -64,12 +64,13 @@ const patients = ref([
     name: "Ana María Rodríguez",
     age: 45,
     gender: "Femenino",
+    birthDate: "1979-05-20",
     phone: "+591-123-4567",
     email: "ana.rodriguez@email.com",
     bloodType: "O+",
     allergies: ["Penicilina", "Mariscos"],
     medicalHistory: [
-      { date: "2024-06-15", type: "Consulta", doctor: "Dr. María González", description: "Presión arterial normal." },
+      { date: "2024-06-15", type: "Consulta", doctor: "Dr. Alan Grant", description: "Presión arterial normal." },
       { date: "2024-05-20", type: "Examen", doctor: "Dr. Carlos Méndez", description: "Examen de sangre completo." },
     ],
   },
@@ -78,12 +79,13 @@ const patients = ref([
     name: "Roberto Mendoza",
     age: 62,
     gender: "Masculino",
+    birthDate: "1962-11-10",
     phone: "+591-987-6543",
     email: "roberto.mendoza@email.com",
     bloodType: "A-",
     allergies: ["Ninguna conocida"],
     medicalHistory: [
-      { date: "2024-06-10", type: "Consulta", doctor: "Dr. María González", description: "Control de diabetes." },
+      { date: "2024-06-10", type: "Consulta", doctor: "Dr. Alan Grant", description: "Control de diabetes." },
     ],
   },
 ]);
@@ -91,13 +93,13 @@ const patients = ref([
 const auditLog = ref([
   {
     timestamp: "2024-06-15 14:30:00",
-    user: "Dr. María González",
+    user: "Dr. Alan Grant",
     action: "Acceso a historial",
     patient: "Ana María Rodríguez",
   },
   {
     timestamp: "2024-06-15 14:25:00",
-    user: "Dr. María González",
+    user: "Dr. Alan Grant",
     action: "Actualización de medicamentos",
     patient: "Ana María Rodríguez",
   },
