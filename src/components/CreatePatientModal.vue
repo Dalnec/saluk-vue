@@ -229,7 +229,9 @@ const createPatient = () => {
     // ],
   };
   emits("create", newEntry);
-  newPatient.value = { ...defaultNewPatient.value };
+  if (!newEntry.id) {
+    newPatient.value = { ...defaultNewPatient.value };
+  }
 };
 
 const searchPatient = async (document) => {
