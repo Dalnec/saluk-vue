@@ -158,7 +158,12 @@
           <div class="mt-8 flex justify-between">
             <button
               type="button"
-              @click="$emit('close')"
+              @click="
+                () => {
+                  newPatient = { ...defaultNewPatient };
+                  $emit('close');
+                }
+              "
               class="px-4 bg-gray-100 p-3 rounded-lg text-black hover:bg-gray-200"
             >
               Cancelar
@@ -208,6 +213,7 @@ const newPatient = ref({
   allergies: "",
 });
 
+const defaultNewPatient = ref({ ...newPatient.value });
 const createPatient = () => {
   const newEntry = {
     ...newPatient.value,
@@ -223,6 +229,7 @@ const createPatient = () => {
     // ],
   };
   emits("create", newEntry);
+  newPatient.value = { ...defaultNewPatient.value };
 };
 
 const searchPatient = async (document) => {
