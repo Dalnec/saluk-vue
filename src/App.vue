@@ -26,18 +26,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import HeaderBar from "./components/HeaderBar.vue";
 import NavTabs from "./components/NavTabs.vue";
 import Dashboard from "./components/Dashboard.vue";
 import Patients from "./components/Patients.vue";
 import AuditLog from "./components/AuditLog.vue";
-import { getAllPatientsAction } from "./actions/get-patient.action";
+import { getAllPatientsAction, searchListPatientAction } from "./actions/get-patient.action";
 import { getDashBoardAction } from "./actions/get-history.action";
+import { useDebounceFn } from "@vueuse/core";
 
 const activeTab = ref("dashboard");
 const selectedPatient = ref(null);
 const searchTerm = ref("");
+watch(searchTerm, (newVal) => {
+  getPatients(newVal);
+});
 
 const currentUser = ref({ name: "JNI Doctor", role: "General" });
 
@@ -82,10 +86,11 @@ const patients = ref([]);
 //   },
 // ]);
 
-const getPatients = async () => {
-  const patientsData = await getAllPatientsAction();
+const getPatients = useDebounceFn(async () => {
+  // const patientsData = await getAllPatientsAction();
+  const patientsData = await searchListPatientAction(searchTerm.value);
   patients.value = patientsData.results || [];
-};
+}, 400);
 
 const geDashboard = async () => {
   const stats = await getDashBoardAction();

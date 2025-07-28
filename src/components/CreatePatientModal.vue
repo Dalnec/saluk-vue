@@ -3,7 +3,9 @@
     <!-- hoverlay  -->
     <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
 
-    <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+    <div
+      class="modal-container bg-white w-11/12 md:max-w-lg mx-auto rounded shadow-lg z-50 overflow-y-auto max-h-[90vh]"
+    >
       <!-- Add modal content here -->
       <div class="modal-content py-4 text-left px-6">
         <div class="flex justify-between items-center pb-3">
@@ -24,7 +26,7 @@
           </div>
         </div>
         <form @submit.prevent="createPatient" autocomplete="off">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-2">
             <!-- Columna Izquierda -->
             <div class="md:col-span-2 f">
               <label class="font-semibold text-gray-600 block mb-2">DNI</label>
@@ -35,9 +37,6 @@
                   inputmode="numeric"
                   placeholder="Ej: 88888888"
                   class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
-                  required
-                  minlength="8"
-                  maxlength="8"
                   autocomplete="off"
                 />
                 <button
@@ -103,7 +102,7 @@
                 autocomplete="off"
               />
             </div>
-            <div>
+            <!-- <div>
               <label class="font-semibold text-gray-600 block mb-2">Correo Electrónico</label>
               <input
                 v-model="newPatient.email"
@@ -112,7 +111,7 @@
                 class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
                 autocomplete="off"
               />
-            </div>
+            </div> -->
             <div>
               <label class="font-semibold text-gray-600 block mb-2">Fecha de Nacimiento</label>
               <input
@@ -123,7 +122,7 @@
                 autocomplete="off"
               />
             </div>
-            <div>
+            <!-- <div>
               <label class="font-semibold text-gray-600 block mb-2">Tipo de Sangre</label>
               <input
                 v-model="newPatient.bloodType"
@@ -132,7 +131,7 @@
                 placeholder="Ej: O+"
                 autocomplete="off"
               />
-            </div>
+            </div> -->
 
             <!-- Columna Derecha -->
             <!-- <div class="md:col-span-2">
@@ -154,13 +153,84 @@
                 autocomplete="off"
               />
             </div>
+            <div class="md:col-span-2">
+              <label class="font-semibold text-gray-600 block mb-2">Dirección</label>
+              <input
+                v-model="newPatient.address"
+                type="text"
+                placeholder="Ej: juan.perez@example.com"
+                class="flex-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                autocomplete="off"
+              />
+            </div>
+            <div class="md:col-span-2">
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">Contactos de Referencia</h3>
+              <div
+                v-for="(contact, index) in newPatient.contacts"
+                :key="index"
+                class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4"
+              >
+                <div class="md:col-span-4">
+                  <div class="flex justify-between">
+                    <label class="font-semibold text-gray-600 block mb-1">Nombre</label>
+                    <button
+                      @click="newPatient.contacts.splice(index, 1)"
+                      class="text-red-500 hover:underline text-sm"
+                      v-if="newPatient.contacts.length > 0"
+                    >
+                      Eliminar contacto
+                    </button>
+                  </div>
+                  <input
+                    v-model="contact.name"
+                    type="text"
+                    class="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    placeholder="Ej: María López"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="font-semibold text-gray-600 block mb-1">Teléfono</label>
+                  <input
+                    v-model="contact.phone"
+                    type="text"
+                    class="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    placeholder="Ej: 76543210"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="font-semibold text-gray-600 block mb-1">Parentesco</label>
+                  <input
+                    v-model="contact.relationship"
+                    type="text"
+                    class="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    placeholder="Ej: Madre"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                @click="
+                  () => {
+                    if (newPatient.contacts) {
+                      newPatient.contacts.push({ name: '', phone: '', relationship: '' });
+                    } else {
+                      newPatient.contacts = [{ name: '', phone: '', relationship: '' }];
+                    }
+                  }
+                "
+                class="mt-2 text-blue-600 hover:underline text-sm"
+              >
+                + Agregar contacto
+              </button>
+            </div>
           </div>
           <div class="mt-8 flex justify-between">
             <button
               type="button"
               @click="
                 () => {
-                  newPatient = { ...defaultNewPatient };
+                  if (!newPatient.id) newPatient = { ...defaultNewPatient };
                   $emit('close');
                 }
               "
@@ -173,6 +243,9 @@
               Guardar Paciente
             </button>
           </div>
+          <!-- <pre>
+            {{ newPatient }}
+          </pre> -->
         </form>
       </div>
     </div>
@@ -211,6 +284,8 @@ const newPatient = ref({
   email: "",
   birthdate: "",
   allergies: "",
+  address: "",
+  contacts: [],
 });
 
 const defaultNewPatient = ref({ ...newPatient.value });
@@ -218,7 +293,6 @@ const createPatient = () => {
   const newEntry = {
     ...newPatient.value,
     allergies: JSON.stringify(newPatient.value.allergies.split(", ").filter((allergy) => allergy.length > 0)),
-
     // auditorylog: [
     //   {
     //     date: new Date().toISOString().split("T")[0],
@@ -228,6 +302,7 @@ const createPatient = () => {
     //   },
     // ],
   };
+
   emits("create", newEntry);
   if (!newEntry.id) {
     newPatient.value = { ...defaultNewPatient.value };
@@ -236,7 +311,6 @@ const createPatient = () => {
 
 const searchPatient = async (document) => {
   const { data, status } = await searchPatientAction(document);
-  console.log(data, status);
 
   if (status === 200 && data.success) {
     newPatient.value.names = data.data.nombres;

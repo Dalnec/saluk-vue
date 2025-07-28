@@ -31,7 +31,7 @@
 
       <!-- Lista de pacientes -->
       <div
-        v-for="patient in filtered"
+        v-for="patient in patients"
         :key="patient.id"
         class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 mb-3"
       >
@@ -75,9 +75,9 @@ const searchModel = computed({
   set: (val) => emits("update:search", val),
 });
 
-const filtered = computed(() =>
-  patients.value.filter((p) => p.names.toLowerCase().includes(search.value.toLowerCase()))
-);
+// const filtered = computed(() =>
+//   patients.value.filter((p) => p.names.toLowerCase().includes(search.value.toLowerCase()))
+// );
 
 // Modal de creación
 const showModal = ref(false);
@@ -85,10 +85,14 @@ const showModal = ref(false);
 const handleCreatePatient = async (newPatientData) => {
   console.log({ patient: newPatientData });
 
-  const res = await createUpdatePatientAction(newPatientData);
+  const { data, status } = await createUpdatePatientAction(newPatientData);
 
-  if (res.error) {
-    toast.error(res.error, { autoClose: 1000 });
+  if (data.success === false) {
+    toast.error(data.message || "Error al crear paciente", { autoClose: 1000 });
+    return;
+  }
+  if (data.error) {
+    toast.error(data.error, { autoClose: 1000 });
     return;
   }
 
@@ -96,7 +100,10 @@ const handleCreatePatient = async (newPatientData) => {
 
   // patients.value.push(newPatientData);
   showModal.value = false;
+  // Recarga la lista de pacientes
   emits("reload");
+  // Redirecciona al registro del nuevo hitorial
+  emits("select", data);
 };
 
 const handleSaveRecord = async (newRecord) => {

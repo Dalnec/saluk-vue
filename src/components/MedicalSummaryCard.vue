@@ -4,18 +4,30 @@
     <div class="flex justify-between items-center border-b">
       <h2 class="text-md font-semibold text-blue-700">Consulta - {{ summary.created }}</h2>
       <!-- <span class="text-sm text-gray-500">Dr. {{ doctor }}</span> -->
-      <button
-        @click="showModal = true"
-        class="px-2 p-1 rounded-lg flex items-center gap-2 text-amber-500 hover:text-amber-400"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
-          />
-        </svg>
-        Editar
-      </button>
+      <div class="flex items-center gap-1">
+        <button
+          @click="deleteMedicalRecord(summary.id)"
+          class="px-2 p-1 rounded-lg flex items-center gap-2 text-red-500 hover:text-red-400"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
+            <!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE -->
+            <path fill="currentColor" d="M5 21V6H4V4h5V3h6v1h5v2h-1v15zm2-2h10V6H7zm2-2h2V8H9zm4 0h2V8h-2zM7 6v13z" />
+          </svg>
+          Eliminar
+        </button>
+        <button
+          @click="showModal = true"
+          class="px-2 p-1 rounded-lg flex items-center gap-2 text-amber-500 hover:text-amber-400"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"
+            />
+          </svg>
+          Editar
+        </button>
+      </div>
     </div>
 
     <div class="grid md:grid-cols-10 gap-2">
@@ -49,20 +61,16 @@
         <!-- Grupo 2: Diagnóstico y Tratamiento -->
         <div>
           <h3 class="text-md font-semibold text-gray-700">🧾 Diagnóstico</h3>
-          <ul v-if="summary.diagnosis.length" class="list-disc pl-5 text-sm text-gray-600">
-            <li v-for="(diag, index) in summary.diagnosis" :key="'dx-' + index">
-              {{ diag.ciex }} - {{ diag.description }} ({{ diag.kind }})
-            </li>
-          </ul>
+          <div v-if="summary.diagnosis" class="list-disc pl-5 text-sm text-gray-600">
+            {{ summary.diagnosis.description }}
+          </div>
           <p v-else class="text-sm text-gray-500">Sin diagnósticos registrados.</p>
         </div>
         <div>
           <h3 class="text-md font-semibold text-gray-700">💊 Tratamiento</h3>
-          <ul v-if="summary.treatments.length" class="list-disc pl-5 text-sm text-gray-600">
-            <li v-for="(med, index) in summary.treatments" :key="'tx-' + index">
-              {{ med.description }} - {{ med.concentration }} - {{ med.presentation }}
-            </li>
-          </ul>
+          <div v-if="summary.treatments" class="list-disc pl-5 text-sm text-gray-600">
+            {{ summary.treatments.description }}
+          </div>
           <p v-else class="text-sm text-gray-500">Sin tratamiento asignado.</p>
         </div>
       </div>
@@ -116,7 +124,13 @@ defineProps({
   },
 });
 
-const emits = defineEmits(["edit-record"]);
+const emits = defineEmits(["edit-record", "delete-record"]);
+
+const deleteMedicalRecord = (historyId) => {
+  if (confirm("¿Seguro que deseas eliminar este Registro?") === true) {
+    emits("delete-record", historyId);
+  }
+};
 
 const showModal = ref(false);
 </script>

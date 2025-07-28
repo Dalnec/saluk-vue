@@ -110,14 +110,14 @@
           <div class="mb-4">
             <div class="flex justify-between items-center mb-2">
               <h4 class="text-md font-semibold mb-2">Diagnóstico</h4>
-              <button
+              <!-- <button
                 @click="showDiagnosisModal = true"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xs py-2 px-4 rounded"
               >
                 Agregar
-              </button>
+              </button> -->
             </div>
-            <div class="overflow-x-auto">
+            <!-- <div class="overflow-x-auto">
               <table class="min-w-full bg-white border border-gray-200">
                 <thead>
                   <tr class="bg-gray-100">
@@ -162,20 +162,26 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> -->
+            <textarea
+              id="notas"
+              rows="4"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              v-model="history.diagnosis.description"
+            ></textarea>
           </div>
 
           <div>
             <div class="flex justify-between items-center mb-2">
               <h4 class="text-md font-semibold mb-2">Tratamiento</h4>
-              <button
+              <!-- <button
                 @click="showTreatmentModal = true"
                 class="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded"
               >
                 Agregar
-              </button>
+              </button> -->
             </div>
-            <div class="overflow-x-auto">
+            <!-- <div class="overflow-x-auto">
               <table class="min-w-full bg-white border border-gray-200">
                 <thead>
                   <tr class="bg-gray-100">
@@ -220,7 +226,13 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> -->
+            <textarea
+              id="notas"
+              rows="4"
+              class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              v-model="history.treatments.description"
+            ></textarea>
           </div>
         </div>
 
@@ -265,8 +277,8 @@
       </div>
     </div>
   </div>
-  <AddDiagnosisModal :show="showDiagnosisModal" @close="showDiagnosisModal = false" @add-diagnosis="addDiagnosis" />
-  <AddTreatmentModal :show="showTreatmentModal" @close="showTreatmentModal = false" @add-treatment="addTreatment" />
+  <!-- <AddDiagnosisModal :show="showDiagnosisModal" @close="showDiagnosisModal = false" @add-diagnosis="addDiagnosis" /> -->
+  <!-- <AddTreatmentModal :show="showTreatmentModal" @close="showTreatmentModal = false" @add-treatment="addTreatment" /> -->
   <!-- <ConfirmModal :show="showConfirmModal" @close="showConfirmModal = false" /> -->
 </template>
 <script setup>
@@ -291,8 +303,8 @@ const history = ref({
   id: props.history.id,
   doctor: props.history.doctor || "",
   physical_exam: props.history.physical_exam || {},
-  diagnosis: props.history.diagnosis || [],
-  treatments: props.history.treatments || [],
+  diagnosis: props.history.diagnosis || {},
+  treatments: props.history.treatments || {},
   notes: props.history.notes || {},
   created: props.history.created || "",
   modified: props.history.modified || "",
@@ -306,27 +318,4 @@ const close = () => {
 
 const showDiagnosisModal = ref(false);
 const showTreatmentModal = ref(false);
-// const showConfirmModal = ref(false);
-
-const addDiagnosis = (diagnosis) => {
-  props.history.diagnosis.push(diagnosis);
-};
-
-const deleteDiagnosis = async (index, id) => {
-  if (confirm("¿Esta seguro de Eliminar?\nEsta acción es irreversible") === true) {
-    props.history.diagnosis.splice(index, 1);
-    await deleteDiagnosisHistoryAction(id);
-  }
-};
-
-const addTreatment = (treatment) => {
-  props.history.treatments.push(treatment);
-};
-
-const deleteTreatment = async (index, id) => {
-  if (confirm("¿Esta seguro de Eliminar?\nEsta acción es irreversible") === true) {
-    props.history.treatments.splice(index, 1);
-    await deleteTreatmentHistoryAction(id);
-  }
-};
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center">
-      <button @click="$emit('back')" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2">
+      <button @click="$emit('back')" class="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2 pr-50">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20">
           <path fill="currentColor" d="m5.83 9l5.58-5.58L10 2l-8 8l8 8l1.41-1.41L5.83 11H18V9z" />
         </svg>
@@ -28,6 +28,7 @@
       <div>
         <h3 class="font-semibold mb-2">Información:</h3>
         <p><strong>Código:</strong> {{ patient.code }}</p>
+        <p><strong>DNI:</strong> {{ patient.ci }}</p>
         <p><strong>Edad:</strong> {{ patient.age }}</p>
         <p><strong>Género:</strong> {{ patient.gender_description }}</p>
         <p><strong>Nacimiento:</strong> {{ patient.birthdate }}</p>
@@ -36,6 +37,10 @@
         <h3 class="font-semibold mb-2">Contacto:</h3>
         <p><strong>Teléfono:</strong> {{ patient.phone }}</p>
         <p><strong>Email:</strong> {{ patient.email }}</p>
+        <h3 class="font-semibold">Referencia:</h3>
+        <div v-for="(contact, index) in patient.contacts || []" :key="index">
+          {{ contact.name }}<br />{{ contact.phone }} - {{ contact.relationship }}
+        </div>
       </div>
       <div>
         <div class="bg-red-50 rounded-lg p-3">
@@ -82,6 +87,7 @@
             :key="index"
             :summary="summary"
             @edit-record="editMedicalRecord($event)"
+            @delete-record="deleteMedicalRecord($event)"
           />
         </div>
       </div>
@@ -173,14 +179,14 @@
         <div class="mb-2">
           <div class="flex justify-between items-center mb-2">
             <h4 class="text-lg font-bold text-gray-800">Diagnóstico</h4>
-            <button
+            <!-- <button
               @click="showDiagnosisModal = true"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold text-xs py-2 px-4 rounded"
             >
               Agregar
-            </button>
+            </button> -->
           </div>
-          <div class="overflow-x-auto">
+          <!-- <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr class="bg-gray-100">
@@ -223,21 +229,27 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
+          <textarea
+            id="notas"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            v-model="newHistory.diagnosis.description"
+          ></textarea>
         </div>
 
         <!-- Tratamiento Section -->
         <div>
           <div class="flex justify-between items-center mb-2">
             <h4 class="text-lg font-bold text-gray-800">Tratamiento</h4>
-            <button
+            <!-- <button
               @click="showTreatmentModal = true"
               class="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded"
             >
               Agregar
-            </button>
+            </button> -->
           </div>
-          <div class="overflow-x-auto">
+          <!-- <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr class="bg-gray-100">
@@ -280,7 +292,13 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div> -->
+          <textarea
+            id="notas"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            v-model="newHistory.treatments.description"
+          ></textarea>
         </div>
       </div>
 
@@ -335,8 +353,8 @@
         Guardar Registro
       </button>
     </div>
-    <AddDiagnosisModal :show="showDiagnosisModal" @close="showDiagnosisModal = false" @add-diagnosis="addDiagnosis" />
-    <AddTreatmentModal :show="showTreatmentModal" @close="showTreatmentModal = false" @add-treatment="addTreatment" />
+    <!-- <AddDiagnosisModal :show="showDiagnosisModal" @close="showDiagnosisModal = false" @add-diagnosis="addDiagnosis" /> -->
+    <!-- <AddTreatmentModal :show="showTreatmentModal" @close="showTreatmentModal = false" @add-treatment="addTreatment" /> -->
     <CreatePatientModal
       :show="showCreatePatientModal"
       @close="showCreatePatientModal = false"
@@ -354,6 +372,7 @@ import MedicalSummaryCard from "./MedicalSummaryCard.vue";
 import { getAllHistoryAction } from "../actions/get-history.action";
 import { toast } from "vue3-toastify";
 import CreatePatientModal from "./CreatePatientModal.vue";
+import { deleteHistoryAction } from "../actions/create-update-history.action";
 
 const props = defineProps({
   patient: {
@@ -375,7 +394,6 @@ onMounted(() => {
 
 const getMedicalHistoryByPatient = async () => {
   const res = await getAllHistoryAction({ patient: props.patient.id });
-  console.log(res);
   medicalHistory.value = res;
 };
 
@@ -418,8 +436,8 @@ const newHistory = ref({
   //   result: "",
   //   file: "",
   // },
-  diagnosis: [],
-  treatments: [],
+  diagnosis: {},
+  treatments: {},
   // attachments: [],
   notes: {
     notes: "",
@@ -430,22 +448,6 @@ const newHistory = ref({
   patient: props.patient.id,
 });
 const defaultnewHistory = ref({ ...newHistory.value });
-
-const addDiagnosis = (diagnosis) => {
-  newHistory.value.diagnosis.push(diagnosis);
-};
-
-const deleteDiagnosis = (index) => {
-  newHistory.value.diagnosis.splice(index, 1);
-};
-
-const addTreatment = (treatment) => {
-  newHistory.value.treatments.push(treatment);
-};
-
-const deleteTreatment = (index) => {
-  newHistory.value.treatments.splice(index, 1);
-};
 
 function normalizeEmptyFields(history) {
   const fieldsToCheck = ["physical_exam", "diagnosis", "treatments", "notes"];
@@ -469,7 +471,6 @@ function normalizeEmptyFields(history) {
 
 const saveMedicalRecord = async (history) => {
   const payload = normalizeEmptyFields({ ...history });
-  console.log(payload);
 
   if (!payload.diagnosis && !payload.treatments && !payload.notes && !payload.physical_exam) {
     toast.error("Ingresar Datos", { autoClose: 2000 });
@@ -488,7 +489,6 @@ const saveMedicalRecord = async (history) => {
 
 const editMedicalRecord = async (history) => {
   const payload = normalizeEmptyFields({ ...history });
-  console.log(payload);
   if (!payload.diagnosis && !payload.treatments && !payload.notes && !payload.physical_exam) {
     toast.error("Ingresar Datos", { autoClose: 2000 });
     return;
@@ -496,6 +496,16 @@ const editMedicalRecord = async (history) => {
   emit("save-record", payload);
   setTimeout(() => {}, 3000);
   newHistory.value = { ...defaultnewHistory.value };
+  await getMedicalHistoryByPatient();
+};
+
+const deleteMedicalRecord = async (id) => {
+  const res = await deleteHistoryAction(id);
+  if (res.error) {
+    toast.error(res.error, { autoClose: 1000 });
+    return;
+  }
+  toast.success("Historial Eliminado!", { autoClose: 1000 });
   await getMedicalHistoryByPatient();
 };
 

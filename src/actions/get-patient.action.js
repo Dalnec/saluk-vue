@@ -29,3 +29,13 @@ export const searchPatientAction = async (document) => {
         throw error;
     }
 }
+
+export const searchListPatientAction = async (search) => {
+    try {
+        const response = await api.get(`/patients/`, { params: { search } });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        throw error;
+    }
+}

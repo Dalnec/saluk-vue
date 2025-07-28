@@ -51,3 +51,13 @@ export const deleteTreatmentHistoryAction = async (historyId) => {
     throw error;
   }
 }
+
+export const deleteHistoryAction = async (historyId) => {
+  try {
+    const response = await api.delete(`/medicalhistory/${historyId}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting history:', error);
+    throw error;
+  }
+}
