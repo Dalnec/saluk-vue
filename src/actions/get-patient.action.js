@@ -39,3 +39,19 @@ export const searchListPatientAction = async (search) => {
         throw error;
     }
 }
+
+export const reportPatientAction = async (search) => {
+    try {
+        const response = await api.get(`/reportpatients/`, {
+            params: { search },
+            headers: {
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            },
+            responseType: 'blob'
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        throw error;
+    }
+}

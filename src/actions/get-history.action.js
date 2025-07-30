@@ -29,3 +29,19 @@ export const getDashBoardAction = async () => {
         throw error;
     }
 }
+
+export const reportRecordsAction = async (search) => {
+    try {
+        const response = await api.get(`/reportmedicalhistory/`, {
+            params: { search },
+            headers: {
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            },
+            responseType: 'blob'
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        throw error;
+    }
+}
